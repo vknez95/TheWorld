@@ -1,0 +1,10 @@
+{
+    "version": "1.0.0",
+    "name": "theworld",
+    "private": true,
+    "devDependencies": {},
+    "dependencies": {
+        "underscore": "~1.8.3",
+        "jquery": "~3.1.1"
+    }
+}

@@ -23,6 +23,8 @@ namespace TheWorld
         {
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            app.UseNodeModules(env.ContentRootPath);
         }
     }
 }
