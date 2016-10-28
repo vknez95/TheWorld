@@ -26,7 +26,8 @@
                 }
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "MailSettings__ToAddress": "from_launch_json@aol.com"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceRoot}/Views"
