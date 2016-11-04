@@ -1,11 +1,13 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TheWorld.Entities;
 using TheWorld.Services;
+using TheWorld.ViewModels;
 
 namespace TheWorld
 {
@@ -40,32 +42,65 @@ namespace TheWorld
                 // Implement a real Mail Service
             }
 
-            services.AddMvc();
+            services.AddDbContext<WorldContext>();
+            services.AddScoped<IWorldRepository, WorldRepository>();
+            services.AddTransient<GeoCoordsService>();
+            
+            services.AddTransient<WorldContextSeedData>();
+            services.AddLogging();
+            
+            services.AddMvc()
+                .AddJsonOptions(config =>
+                {
+                    //config.SerializerSettings.ContractResolver = new CamelCasePropertyNameContractResolver();     unnecessary anymore
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory loggerFactory,
+            WorldContextSeedData seeder,
+            ILoggerFactory factory)
         {
+            Mapper.Initialize(config =>
+            {
+                config.CreateMap<TripViewModel, Trip>().ReverseMap();
+                config.CreateMap<StopViewModel, Stop>().ReverseMap();
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                factory.AddDebug(LogLevel.Information);
             }
             else
             {
-                app.UseExceptionHandler(new ExceptionHandlerOptions
-                {
-                    ExceptionHandler = context => context.Response.WriteAsync("Oops!")
-                });
+                // app.UseExceptionHandler(new ExceptionHandlerOptions
+                // {
+                //     ExceptionHandler = context => context.Response.WriteAsync("Oops!")
+                // });
+                factory.AddDebug(LogLevel.Error);
             }
 
             app.UseFileServer();
 
             app.UseNodeModules(env.ContentRootPath);
 
-            app.UseMvc(ConfigureRoutes);
+            // app.UseMvc(config =>
+            // {
+            //     config.MapRoute(
+            //         name: "Default",
+            //         template: "{controller}/{action}/{id?}",
+            //         defaults: new { controller = "App", action = "Index" }
+            //     );
+            // });
+            app.UseMvc(configureRoutes);
+
+            seeder.EnsureSeedData().Wait();
         }
 
-        private void ConfigureRoutes(IRouteBuilder routeBuilder)
+        private void configureRoutes(IRouteBuilder routeBuilder)
         {
             routeBuilder.MapRoute("Default", "{controller=App}/{action=Index}/{id?}");
         }

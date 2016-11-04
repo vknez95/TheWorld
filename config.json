@@ -1,5 +1,11 @@
 {
     "MailSettings": {
         "ToAddress": "test@aol.com"
+    },
+    "ConnectionStrings": {
+        "WorldContextConnection": "server=localhost;userid=root;pwd=MyNewPass;port=3306;database=TheWorldDb;sslmode=none;"
+    },
+    "Keys": {
+        "BingKey": "Akgw7Ej6l33Nt2vE1Pg6N85k5b8U1CWAK0jo-7EodgIn2UAUeYKWDt6Ra7gMqUHK"
     }
 }
