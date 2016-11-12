@@ -1,6 +1,10 @@
+using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,15 +49,48 @@ namespace TheWorld
             services.AddDbContext<WorldContext>();
             services.AddScoped<IWorldRepository, WorldRepository>();
             services.AddTransient<GeoCoordsService>();
-            
+
             services.AddTransient<WorldContextSeedData>();
             services.AddLogging();
-            
-            services.AddMvc()
-                .AddJsonOptions(config =>
+            services.AddIdentity<WorldUser, IdentityRole>(config =>
+            {
+                config.User.RequireUniqueEmail = true;
+                config.Password.RequiredLength = 8;
+                config.Cookies.ApplicationCookie.LoginPath = "/Auth/Login";
+                config.Cookies.ApplicationCookie.Events = new CookieAuthenticationEvents()
                 {
-                    //config.SerializerSettings.ContractResolver = new CamelCasePropertyNameContractResolver();     unnecessary anymore
-                });
+                    OnRedirectToLogin = async ctx =>
+                      {
+                          if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
+                          {
+                              ctx.Response.StatusCode = 401;
+                          }
+                          else
+                          {
+                              ctx.Response.Redirect(ctx.RedirectUri);
+                          }
+                          await Task.Yield();
+                      }
+                };
+            })
+            .AddEntityFrameworkStores<WorldContext>();
+
+            // services.ConfigureCookieAuthentication(config =>
+            // {
+            //     config.LoginPath = "/Auth/Login";
+            // });
+
+            services.AddMvc(config =>
+            {
+                if (_env.IsProduction())
+                {
+                    config.Filters.Add(new RequireHttpsAttribute());
+                }
+            })
+            .AddJsonOptions(config =>
+            {
+                //config.SerializerSettings.ContractResolver = new CamelCasePropertyNameContractResolver();     unnecessary anymore
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,12 +100,6 @@ namespace TheWorld
             WorldContextSeedData seeder,
             ILoggerFactory factory)
         {
-            Mapper.Initialize(config =>
-            {
-                config.CreateMap<TripViewModel, Trip>().ReverseMap();
-                config.CreateMap<StopViewModel, Stop>().ReverseMap();
-            });
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -84,6 +115,14 @@ namespace TheWorld
             }
 
             app.UseFileServer();
+
+            app.UseIdentity();
+
+            Mapper.Initialize(config =>
+            {
+                config.CreateMap<TripViewModel, Trip>().ReverseMap();
+                config.CreateMap<StopViewModel, Stop>().ReverseMap();
+            });
 
             app.UseNodeModules(env.ContentRootPath);
 

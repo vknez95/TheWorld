@@ -29,7 +29,8 @@
       "type": "build"
     },
     "Microsoft.Extensions.Logging.Debug": "1.0.0-rc2-final",
-    "AutoMapper": "5.1.1"
+    "AutoMapper": "5.1.1",
+    "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0"
   },
   "tools": {
     "Microsoft.AspNetCore.Server.IISIntegration.Tools": {

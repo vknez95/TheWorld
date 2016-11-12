@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -29,10 +30,16 @@ namespace TheWorld.Controllers.Web
 
         public IActionResult Index()
         {
+            return View(nameof(Index));
+        }
+
+        [Authorize]
+        public IActionResult Trips()
+        {
             try
             {
                 var data = _repository.GetAllTrips();
-                return View(nameof(Index), data);
+                return View(nameof(Trips), data);
             }
             catch (Exception ex)
             {
