@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -36,16 +35,7 @@ namespace TheWorld.Controllers.Web
         [Authorize]
         public IActionResult Trips()
         {
-            try
-            {
-                var data = _repository.GetAllTrips();
-                return View(nameof(Trips), data);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to get trips in index page: {ex.Message}");
-                return Redirect("/error");
-            }
+            return View(nameof(Trips));
         }
 
         public IActionResult Contact()

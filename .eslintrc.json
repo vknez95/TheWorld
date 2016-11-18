@@ -20,5 +20,10 @@
         "no-unused-vars": "warn",
         "constructor-super": "warn",
         "valid-typeof": "warn"
+    },
+    "globals": {
+        "angular": true,
+        "_": true,
+        "travelMap": true
     }
 }

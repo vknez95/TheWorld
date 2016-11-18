@@ -125,6 +125,7 @@ namespace TheWorld
             });
 
             app.UseNodeModules(env.ContentRootPath);
+            app.UseBowerComponents(env.ContentRootPath);
 
             // app.UseMvc(config =>
             // {
