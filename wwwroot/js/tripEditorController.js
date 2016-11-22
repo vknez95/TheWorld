@@ -22,8 +22,8 @@
             _showMap(vm.stops);
         };
 
-        var getFail = function(err) {
-            vm.errorMessage = "Failed to load stops: " + err;
+        var getFail = function() {
+            vm.errorMessage = "Failed to load stops";
         };
 
         var getFinally = function() {
@@ -66,7 +66,7 @@
             travelMap.createMap({
                 stops: mapStops,
                 selector: "#map",
-                currentStop: 1,
+                currentStop: 0,
                 initialZoom: 3
             });
         }

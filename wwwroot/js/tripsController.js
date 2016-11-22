@@ -17,9 +17,9 @@
                 // Success
                 // vm.trips = response.data;
                 angular.copy(response.data, vm.trips);
-            }, function(error) {
+            }, function() {
                 // Failure
-                vm.errorMessage = "Failed to load data: " + error;
+                vm.errorMessage = "Failed to load data";
             })
             .finally(function() {
                 vm.isBusy = false;

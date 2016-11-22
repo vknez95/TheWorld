@@ -44,6 +44,7 @@ namespace TheWorld
             else
             {
                 // Implement a real Mail Service
+                services.AddScoped<IMailService, DebugMailService>();
             }
 
             services.AddDbContext<WorldContext>();
@@ -82,10 +83,10 @@ namespace TheWorld
 
             services.AddMvc(config =>
             {
-                if (_env.IsProduction())
-                {
-                    config.Filters.Add(new RequireHttpsAttribute());
-                }
+                // if (_env.IsProduction())
+                // {
+                //     config.Filters.Add(new RequireHttpsAttribute());
+                // }
             })
             .AddJsonOptions(config =>
             {
