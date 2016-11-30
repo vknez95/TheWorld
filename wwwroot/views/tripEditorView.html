@@ -28,10 +28,12 @@
             <tr>
                 <th>Location</th>
                 <th>Arrival</th>
+                <th></th>
             </tr>
             <tr ng-repeat="stop in vm.stops">
                 <td>{{stop.name}}</td>
                 <td>{{stop.arrival | date:shortDate}}</td>
+                <td><a ng-href="" ng-click="vm.deleteStop(stop.id)" class="btn btn-xs btn-danger">Delete</a></td>
             </tr>
         </table>
     </div>

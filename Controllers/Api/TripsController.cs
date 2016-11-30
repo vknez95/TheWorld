@@ -59,5 +59,21 @@ namespace TheWorld.Controllers.Api
             //return BadRequest(ModelState);      // not recommended for public api
             return BadRequest("Failed to save the trip");
         }
+
+        [HttpDelete("{tripId}")]
+        public async Task<IActionResult> Delete(int tripId)
+        {
+            if (ModelState.IsValid)
+            {
+                _repository.RemoveTripById(tripId);
+
+                if (await _repository.SaveChangesAsync())
+                {
+                    return Ok();
+                }
+            }
+
+            return BadRequest("Failed to save the trip");
+        }
     }
 }

@@ -12,19 +12,6 @@
         vm.errorMessage = "";
         vm.isBusy = true;
 
-        $http.get("/api/trips")
-            .then(function(response) {
-                // Success
-                // vm.trips = response.data;
-                angular.copy(response.data, vm.trips);
-            }, function() {
-                // Failure
-                vm.errorMessage = "Failed to load data";
-            })
-            .finally(function() {
-                vm.isBusy = false;
-            });
-
         vm.addTrip = function() {
             vm.isBusy = true;
             vm.errorMessage = "";
@@ -42,5 +29,39 @@
                     vm.isBusy = false;
                 });
         };
+
+        vm.deleteTrip = function(tripId) {
+            vm.isBusy = true;
+            vm.errorMessage = "";
+
+            $http.delete("/api/trips/" + tripId)
+                .then(function() {
+                    // Success
+                    getTrips();
+                }, function() {
+                    // Failure
+                    vm.errorMessage = "Failed to delete trip";
+                })
+                .finally(function() {
+                    vm.isBusy = false;
+                });
+        };
+
+        var getTrips = function() {
+            $http.get("/api/trips")
+                .then(function(response) {
+                    // Success
+                    // vm.trips = response.data;
+                    angular.copy(response.data, vm.trips);
+                }, function() {
+                    // Failure
+                    vm.errorMessage = "Failed to load data";
+                })
+                .finally(function() {
+                    vm.isBusy = false;
+                });
+        }
+
+        getTrips();
     }
 })();

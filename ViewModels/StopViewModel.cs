@@ -5,6 +5,8 @@ namespace TheWorld.ViewModels
 {
     public class StopViewModel
     {
+        public int Id { get; set; }
+
         [Required, StringLength(100, MinimumLength = 5)]
         public string Name { get; set; }
         public double Latitude { get; set; }

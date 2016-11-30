@@ -56,10 +56,10 @@ namespace TheWorld.Controllers.Api
                     var result = await _coordsService.GetCoordsAsync(newStop.Name);
                     if (result.Success)
                     {
-                        newStop.Longitude=result.Longitude;
-                        newStop.Latitude=result.Latitude;
+                        newStop.Longitude = result.Longitude;
+                        newStop.Latitude = result.Latitude;
                         string username = User.Identity.Name;
-                        
+
                         _repository.AddStop(tripName, newStop, username);
 
                         if (await _repository.SaveChangesAsync())
@@ -78,6 +78,22 @@ namespace TheWorld.Controllers.Api
                 _logger.LogError("Failed to save new Stop: {0}", ex);
             }
             return BadRequest("Failed to save new stop");
+        }
+
+        [HttpDelete("{stopId}")]
+        public async Task<IActionResult> Delete(int stopId)
+        {
+            if (ModelState.IsValid)
+            {
+                _repository.RemoveStopById(stopId);
+
+                if (await _repository.SaveChangesAsync())
+                {
+                    return Ok();
+                }
+            }
+
+            return BadRequest("Failed to delete the trip");
         }
     }
 }

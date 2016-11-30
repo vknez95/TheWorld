@@ -15,7 +15,7 @@
         vm.isBusy = true;
         vm.newStop = {};
 
-        var url = "/api/trips/" + vm.tripName + "/stops";
+        var url = "/api/trips/" + vm.tripName + "/stops/";
 
         var getSuccess = function(response) {
             angular.copy(response.data, vm.stops);
@@ -29,7 +29,7 @@
         var getFinally = function() {
             vm.isBusy = false;
         };
-        
+
         $http.get(url).then(getSuccess, getFail).finally(getFinally);
 
         vm.addStop = function() {
@@ -48,8 +48,26 @@
             var postFinally = function() {
                 vm.isBusy = false;
             };
-            
+
             $http.post(url, vm.newStop).then(postSuccess, postFail).finally(postFinally);
+        };
+
+        vm.deleteStop = function(stopId) {
+            vm.isBusy = true;
+
+            var deleteSuccess = function() {
+                $http.get(url).then(getSuccess, getFail).finally(getFinally);
+            };
+
+            var deleteFail = function(err) {
+                vm.errorMessage = err;
+            };
+
+            var deleteFinally = function() {
+                vm.isBusy = false;
+            };
+
+            $http.delete(url + stopId).then(deleteSuccess, deleteFail).finally(deleteFinally);
         };
     }
 
